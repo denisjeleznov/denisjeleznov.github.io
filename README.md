@@ -193,7 +193,7 @@ Response Time - время отклика. Время от посылки зап
 Эти времена часто отображаются в виде процентилей. На практике для приближённого расчёта процентилей используются алгоритмы [forward decay](http://dimacs.rutgers.edu/~graham/pubs/papers/fwddecay.pdf), [t-digest](https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf) и [HdrHistogram](https://github.com/HdrHistogram/HdrHistogram).
 
 
-## Балансировка нагрузки (по мотивам GitHub Network Load Balancer)
+## Балансировка нагрузки (по мотивам [GitHub Network Load Balancer](https://githubengineering.com/glb-director-open-source-load-balancer/))
 ### ECMP
 Routers have a feature called Equal-Cost Multi-Path (ECMP) routing, which is designed to split traffic destined for a single IP across multiple links of equal cost. ECMP works by hashing certain components of an incoming packet such as the source and destination IP addresses and ports. By using a consistent hash for this, subsequent packets that are part of the same TCP flow will hash to the same path, avoiding out of order packets and maintaining session affinity.
 
