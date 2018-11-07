@@ -191,3 +191,15 @@ Service Time -  чистое время, необходимое системе �
 Response Time - время отклика. Время от посылки запроса до получения ответа. Измеряется на стороне клиента.
 
 Эти времена часто отображаются в виде процентилей. На практике для приближённого расчёта процентилей используются алгоритмы [forward decay](http://dimacs.rutgers.edu/~graham/pubs/papers/fwddecay.pdf), [t-digest](https://github.com/tdunning/t-digest/blob/master/docs/t-digest-paper/histo.pdf) и [HdrHistogram](https://github.com/HdrHistogram/HdrHistogram).
+
+
+## Балансировка нагрузки (по мотивам GitHub Network Load Balancer)
+### ECMP
+Routers have a feature called Equal-Cost Multi-Path (ECMP) routing, which is designed to split traffic destined for a single IP across multiple links of equal cost. ECMP works by hashing certain components of an incoming packet such as the source and destination IP addresses and ports. By using a consistent hash for this, subsequent packets that are part of the same TCP flow will hash to the same path, avoiding out of order packets and maintaining session affinity.
+
+### L4/L7 split design
+At the L4 tier, the routers use ECMP to shard traffic using consistent hashing to a set of L4 load balancers - typically using software like ipvs/LVS. LVS keeps connection state, and optionally syncs connection state with multicast to other L4 nodes, and forwards traffic to the L7 tier which runs software such as haproxy. We call the L4 tier “director” hosts since they direct traffic flow, and the L7 tier “proxy” hosts, since they proxy connections to backend servers.
+
+This L4/L7 split has an interesting benefit: the proxy tier nodes can now be removed from rotation by gracefully draining existing connections, since the connection state on the director nodes will keep existing connections mapped to their existing proxy server, even after they are removed from rotation for new connections. Additionally, the proxy tier tends to be the one that requires more upkeep due to frequent configuration changes, upgrades and scaling so this works to our advantage.
+
+If the multicast connection syncing is used, then the L4 load balancer nodes handle failure slightly more gracefully, since once a connection has been synced to the other L4 nodes, the connection will no longer be disrupted.
