@@ -203,3 +203,15 @@ At the L4 tier, the routers use ECMP to shard traffic using consistent hashing t
 This L4/L7 split has an interesting benefit: the proxy tier nodes can now be removed from rotation by gracefully draining existing connections, since the connection state on the director nodes will keep existing connections mapped to their existing proxy server, even after they are removed from rotation for new connections. Additionally, the proxy tier tends to be the one that requires more upkeep due to frequent configuration changes, upgrades and scaling so this works to our advantage.
 
 If the multicast connection syncing is used, then the L4 load balancer nodes handle failure slightly more gracefully, since once a connection has been synced to the other L4 nodes, the connection will no longer be disrupted.
+
+
+## DevOps как способ устранения конфликта Разработки и Сопровождения
+Разработка заинтересована в том, чтобы иметь возможность как можно чаще выказывать изменения. Любые изменения снижают стабильность системы.
+
+Сопровождение заинтересовано в том, чтобы система работала (была стабильной).
+
+Таким образом, Разработка и Сопровождение имеют противоположные точки зрения в вопросе организации жизненного цикла системы. Это неизбежно приводит к конфликту.
+
+DevOps-подход предполагает привлечение Разработки к решению задач Сопровождения. Это приводит к тому, что Разработка делает систему более устойчивой и простой в сопровождении.
+
+В рамках DevOps-подхода Разработка совместно с Сопровождением обеспечивают развитие системы поддерживая её стабильность в соответствии с заданным SLA.  
