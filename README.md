@@ -287,13 +287,13 @@ Blue/green deployment предполагает наличие двух иден�
 Для корректной реализации счётчика можно использовать следующие варианты:
 1. атомарные в БД операции вида: update counters set value = value + 1
 2. блокировки: 
-begin
-select .... **for update**
-update ...
-commit
+```begin
+   select .... **for update**  
+   update ...
+   commit```
 3. применение паттерна **compare and set** (работает даже в отсутсвии транзакций):
-select value from counters;
-update counters set value = new_value **where** value = old_value;
+```select value from counters;
+   update counters set value = new_value **where** value = old_value;```
 
 p.s. На уровне изоляции Repeatable read PostgreSQL (в Oracle он называется serializable а в SQL Server - snapshot isolation) БД автоматически обнаруживает потерянные обновления и прерывает откатывает транзакцию. Однако, MySQL этого не делает.
 
